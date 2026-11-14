@@ -90,6 +90,7 @@ public class ProfilesController {
             case Result.Failure<Profile, ProfileCommandFailure> f ->
                     switch (f.error()) {
                         case ProfileCommandFailure.NotFound x -> ResponseEntity.notFound().build();
+                        case ProfileCommandFailure.InvalidVehicleType x -> ResponseEntity.badRequest().build();
                     };
         };
     }
