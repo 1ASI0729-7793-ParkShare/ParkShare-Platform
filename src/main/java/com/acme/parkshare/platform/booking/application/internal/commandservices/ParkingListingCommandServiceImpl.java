@@ -36,7 +36,11 @@ public class ParkingListingCommandServiceImpl implements ParkingListingCommandSe
                 command.covered(),
                 command.latitude(),
                 command.longitude(),
-                Instant.now(clock)
+                Instant.now(clock),
+                command.features(),
+                command.photos(),
+                command.publicationStatus(),
+                command.availabilityPeriods()
         );
         return Result.success(repository.save(listing));
     }
@@ -62,7 +66,11 @@ public class ParkingListingCommandServiceImpl implements ParkingListingCommandSe
                 command.latitude(),
                 command.longitude(),
                 current.getCreatedAt(),
-                Instant.now(clock)
+                Instant.now(clock),
+                command.features() != null ? command.features() : current.getFeatures(),
+                command.photos() != null ? command.photos() : current.getPhotos(),
+                command.publicationStatus() != null ? command.publicationStatus() : current.getPublicationStatus(),
+                command.availabilityPeriods() != null ? command.availabilityPeriods() : current.getAvailabilityPeriods()
         );
         return Result.success(repository.save(updated));
     }

@@ -11,5 +11,9 @@ public record UpdateParkingListingCommand(
         boolean covered,
         String availability,
         Double latitude,
-        Double longitude
+        Double longitude,
+        String features,
+        String photos,
+        String publicationStatus,
+        String availabilityPeriods
 ) {}
