@@ -7,9 +7,11 @@ import com.acme.parkshare.platform.booking.application.commands.UpdateReservatio
 import com.acme.parkshare.platform.booking.domain.model.aggregates.Reservation;
 import com.acme.parkshare.platform.booking.domain.repositories.ReservationRepository;
 import com.acme.parkshare.platform.shared.application.result.Result;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.acme.parkshare.platform.booking.domain.model.events.ReservationCompletedEvent;
 import java.time.Clock;
 import java.time.Instant;
 
@@ -19,10 +21,13 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
 
     private final ReservationRepository repository;
     private final Clock clock;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ReservationCommandServiceImpl(ReservationRepository repository, Clock clock) {
+    public ReservationCommandServiceImpl(ReservationRepository repository, Clock clock,
+                                         ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
         this.clock = clock;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -63,6 +68,13 @@ public class ReservationCommandServiceImpl implements ReservationCommandService 
             return Result.failure(new ReservationCommandFailure.InvalidStatus(
                     "Unknown status transition: " + command.newStatus()));
         }
-        return Result.success(repository.save(updated));
+        var saved = repository.save(updated);
+        if ("completed".equals(saved.getStatus()) && !"completed".equals(current.getStatus())) {
+            eventPublisher.publishEvent(new ReservationCompletedEvent(
+                    saved.getId(), saved.getOwnerId(), saved.getDriverName(), saved.getSpaceName(),
+                    saved.getStartedAt(), saved.getEndedAt(), saved.getPlannedHours(),
+                    saved.getTotalCost(), now));
+        }
+        return Result.success(saved);
     }
 }
