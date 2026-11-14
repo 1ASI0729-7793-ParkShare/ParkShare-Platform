@@ -13,7 +13,9 @@ public class ParkingListingPersistenceMapper {
                 listing.getAddress(), listing.getDistrict(), listing.getHourlyRate(),
                 listing.isCovered(), listing.getRating(), listing.getReviewCount(),
                 listing.getAvailability(), listing.getLatitude(), listing.getLongitude(),
-                listing.getCreatedAt(), listing.getUpdatedAt()
+                listing.getCreatedAt(), listing.getUpdatedAt(),
+                listing.getFeatures(), listing.getPhotos(), listing.getPublicationStatus(),
+                listing.getAvailabilityPeriods()
         );
     }
 
@@ -22,7 +24,8 @@ public class ParkingListingPersistenceMapper {
                 e.getId(), e.getOwnerId(), e.getName(), e.getAddress(), e.getDistrict(),
                 e.getHourlyRate(), e.isCovered(), e.getRating(), e.getReviewCount(),
                 e.getAvailability(), e.getLatitude(), e.getLongitude(),
-                e.getCreatedAt(), e.getUpdatedAt()
+                e.getCreatedAt(), e.getUpdatedAt(),
+                e.getFeatures(), e.getPhotos(), e.getPublicationStatus(), e.getAvailabilityPeriods()
         );
     }
 }
