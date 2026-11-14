@@ -1,6 +1,8 @@
 package com.acme.parkshare.platform.incidentreporting.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.Instant;
 
 @Entity
@@ -16,7 +18,7 @@ public class IncidentJpaEntity {
     @Column(name = "space_address", nullable = false, length = 500) private String spaceAddress;
     @Column(name = "incident_types", nullable = false, length = 500) private String incidentTypes;
     @Column(nullable = false, length = 500) private String description;
-    @Column(columnDefinition = "TEXT") private String photos;
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR) @Column private String photos;
     @Column(nullable = false, length = 20) private String status;
     @Column(name = "created_at", nullable = false, updatable = false) private Instant createdAt;
     @Column(name = "resolved_at") private Instant resolvedAt;
