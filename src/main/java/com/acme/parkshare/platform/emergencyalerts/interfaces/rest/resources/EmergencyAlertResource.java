@@ -4,12 +4,14 @@ import java.time.Instant;
 
 public record EmergencyAlertResource(
         Long id,
-        Long reporterId,
-        Long parkingListingId,
         Long ownerId,
+        Long parkingListingId,
+        String spaceName,
+        String kind,
+        String notes,
         Double latitude,
         Double longitude,
-        String description,
+        String locationSource,
         String status,
         Instant createdAt,
         Instant resolvedAt
