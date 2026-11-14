@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
+import java.util.List;
 
 public record CreateParkingListingResource(
         @NotNull Long ownerId,
@@ -13,5 +14,9 @@ public record CreateParkingListingResource(
         @NotNull @Positive BigDecimal hourlyRate,
         @NotNull Boolean covered,
         @NotNull Double latitude,
-        @NotNull Double longitude
+        @NotNull Double longitude,
+        List<String> features,
+        List<String> photos,
+        String publicationStatus,
+        List<ListingAvailabilityPeriodResource> availabilityPeriods
 ) {}

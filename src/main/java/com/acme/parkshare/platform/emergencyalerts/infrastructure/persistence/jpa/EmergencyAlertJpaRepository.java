@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface EmergencyAlertJpaRepository extends JpaRepository<EmergencyAlertJpaEntity, Long> {
     List<EmergencyAlertJpaEntity> findAllByOwnerId(Long ownerId);
-    List<EmergencyAlertJpaEntity> findAllByReporterId(Long reporterId);
 }

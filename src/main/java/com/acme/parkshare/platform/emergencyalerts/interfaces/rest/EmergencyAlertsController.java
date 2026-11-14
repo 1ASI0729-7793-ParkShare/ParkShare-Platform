@@ -49,12 +49,14 @@ public class EmergencyAlertsController {
     })
     public ResponseEntity<EmergencyAlertResource> create(@Valid @RequestBody CreateEmergencyAlertResource resource) {
         var command = new CreateEmergencyAlertCommand(
-                resource.reporterId(),
-                resource.parkingListingId(),
                 resource.ownerId(),
+                resource.parkingListingId(),
+                resource.spaceName(),
+                resource.kind(),
+                resource.notes(),
                 resource.latitude(),
                 resource.longitude(),
-                resource.description()
+                resource.locationSource()
         );
         var result = commandService.handle(command);
         return switch (result) {

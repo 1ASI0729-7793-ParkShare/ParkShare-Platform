@@ -40,7 +40,7 @@ public class VerificationDocumentCommandServiceImpl implements VerificationDocum
             return Result.failure(new VerificationDocumentCommandFailure.ProfileNotFound(command.profileId()));
         }
         Instant now = Instant.now(clock);
-        VerificationDocument doc = VerificationDocument.create(command.profileId(), command.type(), now);
+        VerificationDocument doc = VerificationDocument.create(command.profileId(), command.type(), command.fileName(), now);
         return Result.success(verificationDocumentRepository.save(doc));
     }
 

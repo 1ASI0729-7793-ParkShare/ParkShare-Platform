@@ -22,8 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.acme.parkshare.platform.shared.interfaces.rest.transform.JsonText;
+
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -63,9 +67,11 @@ public class ParkingListingsController {
     @GetMapping
     @Operation(summary = "Get all parking listings")
     @ApiResponse(responseCode = "200", description = "Parking listings retrieved")
-    public ResponseEntity<List<ParkingListingResource>> getAll() {
+    public ResponseEntity<List<ParkingListingResource>> getAll(@RequestParam(required = false) Long ownerId) {
         var listings = queryService.handle(new GetAllParkingListingsQuery())
-                .stream().map(ParkingListingResourceMapper::toResource).toList();
+                .stream()
+                .filter(listing -> ownerId == null || ownerId.equals(listing.getOwnerId()))
+                .map(ParkingListingResourceMapper::toResource).toList();
         return ResponseEntity.ok(listings);
     }
 
@@ -80,6 +86,52 @@ public class ParkingListingsController {
                 .map(ParkingListingResourceMapper::toResource)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
+    @Operation(summary = "Partially update a parking listing",
+            description = "Only the supplied fields change (price, photos, publicationStatus, availabilityPeriods, ...).")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Parking listing updated"),
+            @ApiResponse(responseCode = "404", description = "Parking listing not found")
+    })
+    public ResponseEntity<ParkingListingResource> patch(@PathVariable Long id,
+                                                        @RequestBody Map<String, Object> changes) {
+        var existing = queryService.handle(new GetParkingListingByIdQuery(id));
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        var current = ParkingListingResourceMapper.toResource(existing.get());
+        var merged = new HashMap<String, Object>();
+        merged.put("name", current.name());
+        merged.put("address", current.address());
+        merged.put("district", current.district());
+        merged.put("hourlyRate", current.hourlyRate());
+        merged.put("covered", current.covered());
+        merged.put("availability", current.availability());
+        merged.put("latitude", current.latitude());
+        merged.put("longitude", current.longitude());
+        merged.put("features", current.features());
+        merged.put("photos", current.photos());
+        merged.put("publicationStatus", current.publicationStatus());
+        merged.put("availabilityPeriods", current.availabilityPeriods());
+        merged.putAll(changes);
+        UpdateParkingListingResource resource;
+        try {
+            resource = JsonText.convert(merged, UpdateParkingListingResource.class);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+        var result = commandService.handle(UpdateParkingListingCommandMapper.toCommand(id, resource));
+        return switch (result) {
+            case Result.Success<ParkingListing, ParkingListingCommandFailure> s ->
+                    ResponseEntity.ok(ParkingListingResourceMapper.toResource(s.value()));
+            case Result.Failure<ParkingListing, ParkingListingCommandFailure> f ->
+                    switch (f.error()) {
+                        case ParkingListingCommandFailure.NotFound x -> ResponseEntity.notFound().build();
+                        case ParkingListingCommandFailure.InvalidStatus x -> ResponseEntity.badRequest().build();
+                    };
+        };
     }
 
     @PutMapping("/{id}")

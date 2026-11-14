@@ -21,6 +21,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.acme.parkshare.platform.shared.interfaces.rest.transform.JsonText;
+
 import java.net.URI;
 import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -45,7 +47,8 @@ public class IncidentsController {
     public ResponseEntity<IncidentResource> create(@Valid @RequestBody CreateIncidentResource resource) {
         var command = new CreateIncidentCommand(resource.reporterId(), resource.reporterName(),
                 resource.parkingListingId(), resource.ownerId(), resource.spaceName(),
-                resource.spaceAddress(), resource.incidentTypes(), resource.description(), resource.photos());
+                resource.spaceAddress(), JsonText.toJson(resource.types()), resource.description(),
+                JsonText.toJson(resource.photos()));
         var result = commandService.handle(command);
         return switch (result) {
             case Result.Success<Incident, IncidentCommandFailure> s ->

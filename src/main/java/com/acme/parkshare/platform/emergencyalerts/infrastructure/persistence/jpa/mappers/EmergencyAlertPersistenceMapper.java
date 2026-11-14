@@ -7,35 +7,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmergencyAlertPersistenceMapper {
 
-    public EmergencyAlertJpaEntity toEntity(EmergencyAlert alert) {
-        return new EmergencyAlertJpaEntity(
-                alert.getId(),
-                alert.getReporterId(),
-                alert.getParkingListingId(),
-                alert.getOwnerId(),
-                alert.getLatitude(),
-                alert.getLongitude(),
-                alert.getDescription(),
-                alert.getStatus(),
-                alert.getCreatedAt(),
-                alert.getResolvedAt(),
-                alert.getUpdatedAt()
-        );
+    public EmergencyAlertJpaEntity toEntity(EmergencyAlert a) {
+        return new EmergencyAlertJpaEntity(a.getId(), a.getOwnerId(), a.getParkingListingId(), a.getSpaceName(),
+                a.getKind(), a.getNotes(), a.getLatitude(), a.getLongitude(), a.getLocationSource(),
+                a.getStatus(), a.getCreatedAt(), a.getResolvedAt(), a.getUpdatedAt());
     }
 
-    public EmergencyAlert toDomain(EmergencyAlertJpaEntity entity) {
-        return EmergencyAlert.rehydrate(
-                entity.getId(),
-                entity.getReporterId(),
-                entity.getParkingListingId(),
-                entity.getOwnerId(),
-                entity.getLatitude(),
-                entity.getLongitude(),
-                entity.getDescription(),
-                entity.getStatus(),
-                entity.getCreatedAt(),
-                entity.getResolvedAt(),
-                entity.getUpdatedAt()
-        );
+    public EmergencyAlert toDomain(EmergencyAlertJpaEntity e) {
+        return EmergencyAlert.rehydrate(e.getId(), e.getOwnerId(), e.getParkingListingId(), e.getSpaceName(),
+                e.getKind(), e.getNotes(), e.getLatitude(), e.getLongitude(), e.getLocationSource(),
+                e.getStatus(), e.getCreatedAt(), e.getResolvedAt(), e.getUpdatedAt());
     }
 }

@@ -40,9 +40,4 @@ public class EmergencyAlertRepositoryAdapter implements EmergencyAlertRepository
     public List<EmergencyAlert> findAllByOwnerId(Long ownerId) {
         return repository.findAllByOwnerId(ownerId).stream().map(mapper::toDomain).toList();
     }
-
-    @Override
-    public List<EmergencyAlert> findAllByReporterId(Long reporterId) {
-        return repository.findAllByReporterId(reporterId).stream().map(mapper::toDomain).toList();
-    }
 }

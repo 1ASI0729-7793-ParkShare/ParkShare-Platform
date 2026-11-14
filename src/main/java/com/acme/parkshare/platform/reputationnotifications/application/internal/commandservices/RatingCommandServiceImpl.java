@@ -8,6 +8,8 @@ import com.acme.parkshare.platform.reputationnotifications.domain.model.aggregat
 import com.acme.parkshare.platform.reputationnotifications.domain.repositories.RatingRepository;
 import com.acme.parkshare.platform.reputationnotifications.domain.repositories.UserReputationRepository;
 import com.acme.parkshare.platform.shared.application.result.Result;
+import com.acme.parkshare.platform.reputationnotifications.domain.model.events.RatingSubmittedEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +23,16 @@ public class RatingCommandServiceImpl implements RatingCommandService {
     private final RatingRepository ratingRepository;
     private final UserReputationRepository userReputationRepository;
     private final Clock clock;
+    private final ApplicationEventPublisher eventPublisher;
 
     public RatingCommandServiceImpl(RatingRepository ratingRepository,
                                     UserReputationRepository userReputationRepository,
-                                    Clock clock) {
+                                    Clock clock,
+                                    ApplicationEventPublisher eventPublisher) {
         this.ratingRepository = ratingRepository;
         this.userReputationRepository = userReputationRepository;
         this.clock = clock;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -50,6 +55,8 @@ public class RatingCommandServiceImpl implements RatingCommandService {
         var rep = userReputationRepository.findByUserId(command.revieweeId())
                 .orElseGet(() -> UserReputation.create(command.revieweeId(), now));
         userReputationRepository.save(rep.addRating(command.score(), now));
+        eventPublisher.publishEvent(new RatingSubmittedEvent(savedRating.getId(), command.bookingId(),
+                command.reviewerId(), command.revieweeId(), command.score(), now));
 
         return Result.success(savedRating);
     }

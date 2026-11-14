@@ -14,5 +14,9 @@ public record CreateParkingListingCommand(
         @NotNull @DecimalMin("0.0") BigDecimal hourlyRate,
         boolean covered,
         @NotNull Double latitude,
-        @NotNull Double longitude
+        @NotNull Double longitude,
+        String features,
+        String photos,
+        String publicationStatus,
+        String availabilityPeriods
 ) {}

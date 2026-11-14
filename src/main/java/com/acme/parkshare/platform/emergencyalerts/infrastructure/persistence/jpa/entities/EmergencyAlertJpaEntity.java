@@ -1,6 +1,7 @@
 package com.acme.parkshare.platform.emergencyalerts.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+
 import java.time.Instant;
 
 @Entity
@@ -11,23 +12,27 @@ public class EmergencyAlertJpaEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "reporter_id", nullable = false)
-    private Long reporterId;
-
-    @Column(name = "parking_listing_id", nullable = false)
-    private Long parkingListingId;
-
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
 
-    @Column(nullable = false)
+    @Column(name = "parking_listing_id")
+    private Long parkingListingId;
+
+    @Column(name = "space_name", length = 200)
+    private String spaceName;
+
+    @Column(nullable = false, length = 30)
+    private String kind;
+
+    @Column(length = 500)
+    private String notes;
+
     private Double latitude;
 
-    @Column(nullable = false)
     private Double longitude;
 
-    @Column(nullable = false, length = 1000)
-    private String description;
+    @Column(name = "location_source", length = 20)
+    private String locationSource;
 
     @Column(nullable = false, length = 20)
     private String status;
@@ -43,16 +48,18 @@ public class EmergencyAlertJpaEntity {
 
     protected EmergencyAlertJpaEntity() {}
 
-    public EmergencyAlertJpaEntity(Long id, Long reporterId, Long parkingListingId, Long ownerId,
-                                   Double latitude, Double longitude, String description, String status,
-                                   Instant createdAt, Instant resolvedAt, Instant updatedAt) {
+    public EmergencyAlertJpaEntity(Long id, Long ownerId, Long parkingListingId, String spaceName, String kind,
+                                   String notes, Double latitude, Double longitude, String locationSource,
+                                   String status, Instant createdAt, Instant resolvedAt, Instant updatedAt) {
         this.id = id;
-        this.reporterId = reporterId;
-        this.parkingListingId = parkingListingId;
         this.ownerId = ownerId;
+        this.parkingListingId = parkingListingId;
+        this.spaceName = spaceName;
+        this.kind = kind;
+        this.notes = notes;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.description = description;
+        this.locationSource = locationSource;
         this.status = status;
         this.createdAt = createdAt;
         this.resolvedAt = resolvedAt;
@@ -60,12 +67,14 @@ public class EmergencyAlertJpaEntity {
     }
 
     public Long getId() { return id; }
-    public Long getReporterId() { return reporterId; }
-    public Long getParkingListingId() { return parkingListingId; }
     public Long getOwnerId() { return ownerId; }
+    public Long getParkingListingId() { return parkingListingId; }
+    public String getSpaceName() { return spaceName; }
+    public String getKind() { return kind; }
+    public String getNotes() { return notes; }
     public Double getLatitude() { return latitude; }
     public Double getLongitude() { return longitude; }
-    public String getDescription() { return description; }
+    public String getLocationSource() { return locationSource; }
     public String getStatus() { return status; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getResolvedAt() { return resolvedAt; }

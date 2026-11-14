@@ -1,6 +1,8 @@
 package com.acme.parkshare.platform.booking.infrastructure.persistence.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.math.BigDecimal;
 import java.time.Instant;
 
@@ -51,12 +53,26 @@ public class ParkingListingJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @Column(length = 1000)
+    private String features;
+
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR) @Column
+    private String photos;
+
+    @Column(name = "publication_status", length = 20)
+    private String publicationStatus;
+
+    @Column(name = "availability_periods", columnDefinition = "TEXT")
+    private String availabilityPeriods;
+
     protected ParkingListingJpaEntity() {}
 
     public ParkingListingJpaEntity(Long id, Long ownerId, String name, String address, String district,
                                    BigDecimal hourlyRate, boolean covered, BigDecimal rating, int reviewCount,
                                    String availability, Double latitude, Double longitude,
-                                   Instant createdAt, Instant updatedAt) {
+                                   Instant createdAt, Instant updatedAt,
+                                   String features, String photos, String publicationStatus,
+                                   String availabilityPeriods) {
         this.id = id;
         this.ownerId = ownerId;
         this.name = name;
@@ -71,6 +87,10 @@ public class ParkingListingJpaEntity {
         this.longitude = longitude;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.features = features;
+        this.photos = photos;
+        this.publicationStatus = publicationStatus;
+        this.availabilityPeriods = availabilityPeriods;
     }
 
     public Long getId() { return id; }
@@ -87,4 +107,8 @@ public class ParkingListingJpaEntity {
     public Double getLongitude() { return longitude; }
     public Instant getCreatedAt() { return createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }
+    public String getFeatures() { return features; }
+    public String getPhotos() { return photos; }
+    public String getPublicationStatus() { return publicationStatus; }
+    public String getAvailabilityPeriods() { return availabilityPeriods; }
 }

@@ -9,5 +9,4 @@ public interface EmergencyAlertRepository {
     Optional<EmergencyAlert> findById(Long id);
     List<EmergencyAlert> findAll();
     List<EmergencyAlert> findAllByOwnerId(Long ownerId);
-    List<EmergencyAlert> findAllByReporterId(Long reporterId);
 }
