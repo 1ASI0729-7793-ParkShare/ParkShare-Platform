@@ -26,8 +26,8 @@ public final class VerificationDocument extends AbstractDomainAggregateRoot {
         this.createdAt = createdAt;
     }
 
-    public static VerificationDocument create(Long profileId, String type, Instant now) {
-        var doc = new VerificationDocument(null, profileId, type, "in-review", now, null, now);
+    public static VerificationDocument create(Long profileId, String type, String fileName, Instant now) {
+        var doc = new VerificationDocument(null, profileId, type, "in-review", now, fileName, now);
         doc.registerEvent(new VerificationDocumentCreatedEvent(profileId, type, now));
         return doc;
     }
