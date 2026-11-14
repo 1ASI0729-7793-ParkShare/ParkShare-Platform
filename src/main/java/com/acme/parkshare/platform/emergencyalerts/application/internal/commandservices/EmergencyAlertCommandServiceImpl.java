@@ -28,12 +28,14 @@ public class EmergencyAlertCommandServiceImpl implements EmergencyAlertCommandSe
     @Override
     public Result<EmergencyAlert, EmergencyAlertCommandFailure> handle(CreateEmergencyAlertCommand command) {
         var alert = EmergencyAlert.create(
-                command.reporterId(),
-                command.parkingListingId(),
                 command.ownerId(),
+                command.parkingListingId(),
+                command.spaceName(),
+                command.kind(),
+                command.notes(),
                 command.latitude(),
                 command.longitude(),
-                command.description(),
+                command.locationSource(),
                 Instant.now(clock)
         );
         return Result.success(repository.save(alert));
